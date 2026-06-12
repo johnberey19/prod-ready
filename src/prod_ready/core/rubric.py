@@ -15,7 +15,8 @@ def list_app_types() -> list[str]:
     if not RUBRIC_DIR.exists():
         return []
     return sorted(
-        d.name.replace("_", "-") for d in RUBRIC_DIR.iterdir()
+        d.name.replace("_", "-")
+        for d in RUBRIC_DIR.iterdir()
         if d.is_dir() and any(d.glob("*.yaml"))
     )
 
@@ -25,9 +26,7 @@ def list_versions(app_type: str) -> list[str]:
     type_dir = RUBRIC_DIR / app_type
     if not type_dir.exists():
         return []
-    return sorted(
-        f.stem for f in type_dir.glob("*.yaml")
-    )
+    return sorted(f.stem for f in type_dir.glob("*.yaml"))
 
 
 def load_rubric(app_type: str, version: str | None = None) -> dict[str, Any]:
@@ -72,8 +71,15 @@ def _version_key(version_str: str) -> tuple[int, ...]:
 
 def get_categories(rubric: dict[str, Any]) -> list[str]:
     """Extract category keys from a rubric dict."""
-    reserved = {"version", "last_reviewed", "app_type", "weights", "metadata",
-                "_resolved_version", "_resolved_path"}
+    reserved = {
+        "version",
+        "last_reviewed",
+        "app_type",
+        "weights",
+        "metadata",
+        "_resolved_version",
+        "_resolved_path",
+    }
     return [k for k in rubric if k not in reserved]
 
 

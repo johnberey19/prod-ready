@@ -23,7 +23,9 @@ class TestCLIAssess:
 
     def test_assess_json_output(self, runner):
         with tempfile.TemporaryDirectory() as tmp:
-            result = runner.invoke(main, ["assess", "--type", "web-api", "--path", tmp, "--format", "json"])
+            result = runner.invoke(
+                main, ["assess", "--type", "web-api", "--path", tmp, "--format", "json"]
+            )
             assert result.exit_code == 0
             assert '"app_type": "web-api"' in result.output
             assert '"overall_score"' in result.output
@@ -37,7 +39,9 @@ class TestCLIAssess:
 
     def test_assess_yaml_output(self, runner):
         with tempfile.TemporaryDirectory() as tmp:
-            result = runner.invoke(main, ["assess", "--type", "web-api", "--path", tmp, "--format", "yaml"])
+            result = runner.invoke(
+                main, ["assess", "--type", "web-api", "--path", tmp, "--format", "yaml"]
+            )
             assert result.exit_code == 0
             assert "app_type: web-api" in result.output
 

@@ -19,8 +19,7 @@ class CheckHandler(Protocol):
         check_def: dict[str, Any],
         project_path: str,
         custom_paths: dict[str, str],
-    ) -> CheckResult:
-        ...
+    ) -> CheckResult: ...
 
 
 class AppTypePlugin(Protocol):
@@ -48,4 +47,5 @@ class AppTypePlugin(Protocol):
 def discover_plugins() -> list[str]:
     """Return list of built-in app type keys with rubrics."""
     from prod_ready.core.rubric import list_app_types
+
     return list_app_types()
