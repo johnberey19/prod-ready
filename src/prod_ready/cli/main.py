@@ -31,29 +31,42 @@ def main():
 
 @main.command()
 @click.option(
-    "--type", "app_type", required=True,
+    "--type",
+    "app_type",
+    required=True,
     help="Application type to assess (e.g. web-api, data-pipeline).",
 )
 @click.option(
-    "--path", "project_path", default=".",
+    "--path",
+    "project_path",
+    default=".",
     type=click.Path(exists=True, file_okay=False, path_type=Path),
     help="Path to the project root.",
 )
 @click.option(
-    "--format", "output_format", default="table",
+    "--format",
+    "output_format",
+    default="table",
     type=click.Choice(["table", "json", "yaml"], case_sensitive=False),
     help="Output format.",
 )
 @click.option(
-    "--rubric-version", default=None,
+    "--rubric-version",
+    default=None,
     help="Rubric version to use (default: latest).",
 )
 @click.option(
-    "--exclude", multiple=True,
+    "--exclude",
+    multiple=True,
     help="Check IDs to exclude (repeatable).",
 )
-def assess_cmd(app_type: str, project_path: Path, output_format: str,
-               rubric_version: str | None, exclude: tuple[str, ...]):
+def assess_cmd(
+    app_type: str,
+    project_path: Path,
+    output_format: str,
+    rubric_version: str | None,
+    exclude: tuple[str, ...],
+):
     """Run a production-readiness assessment."""
     config = {"exclude_checks": list(exclude)} if exclude else {}
 
@@ -73,6 +86,7 @@ def assess_cmd(app_type: str, project_path: Path, output_format: str,
         console.print(json.dumps(_result_to_dict(result), indent=2))
     elif output_format == "yaml":
         import yaml
+
         console.print(yaml.dump(_result_to_dict(result), default_flow_style=False))
     else:
         _print_table(result)
@@ -100,7 +114,9 @@ def list_types():
 
 @main.command()
 @click.option(
-    "--type", "app_type", required=True,
+    "--type",
+    "app_type",
+    required=True,
     help="Application type.",
 )
 def info(app_type: str):
@@ -116,6 +132,7 @@ def info(app_type: str):
     console.print(f"[bold]Last Reviewed:[/bold] {rubric.get('last_reviewed', '?')}")
 
     from prod_ready.core.rubric import get_categories
+
     cats = get_categories(rubric)
     console.print(f"\n[bold]Categories ({len(cats)}):[/bold]")
     for cat in cats:
@@ -139,9 +156,7 @@ def _print_table(result):
     color = severity_color[result.severity]
     icon = severity_icon[result.severity]
 
-    console.print(
-        f"\n[bold]prod-ready Assessment — {result.app_type}[/bold]"
-    )
+    console.print(f"\n[bold]prod-ready Assessment — {result.app_type}[/bold]")
     console.print("─" * 40)
     console.print(
         f"Overall Score: [{color}]{result.overall_score}/100  {icon}  "

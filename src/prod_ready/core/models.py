@@ -70,27 +70,12 @@ class AssessmentResult:
 
     @property
     def critical_gaps(self) -> int:
-        return sum(
-            1
-            for cat in self.categories
-            for c in cat.checks
-            if c.severity == Severity.FAIL
-        )
+        return sum(1 for cat in self.categories for c in cat.checks if c.severity == Severity.FAIL)
 
     @property
     def high_gaps(self) -> int:
-        return sum(
-            1
-            for cat in self.categories
-            for c in cat.checks
-            if c.severity == Severity.WARN
-        )
+        return sum(1 for cat in self.categories for c in cat.checks if c.severity == Severity.WARN)
 
     @property
     def total_gaps(self) -> int:
-        return sum(
-            1
-            for cat in self.categories
-            for c in cat.checks
-            if c.severity != Severity.PASS
-        )
+        return sum(1 for cat in self.categories for c in cat.checks if c.severity != Severity.PASS)

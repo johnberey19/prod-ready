@@ -52,13 +52,15 @@ def assess(
     )
 
     # Weighted overall score
-    total_weight = sum(
-        get_category_weight(rubric, cat.category.value) for cat in categories
+    total_weight = sum(get_category_weight(rubric, cat.category.value) for cat in categories)
+    overall = (
+        sum(
+            cat.score * get_category_weight(rubric, cat.category.value) / total_weight
+            for cat in categories
+        )
+        if total_weight
+        else 0.0
     )
-    overall = sum(
-        cat.score * get_category_weight(rubric, cat.category.value) / total_weight
-        for cat in categories
-    ) if total_weight else 0.0
 
     return AssessmentResult(
         app_type=app_type,
@@ -97,12 +99,14 @@ def _score_all_categories(
             custom_paths,
             cat_key,
         )
-        results.append(CategoryScore(
-            category=category,
-            score=round(score, 1),
-            max_score=max_score,
-            checks=checks,
-        ))
+        results.append(
+            CategoryScore(
+                category=category,
+                score=round(score, 1),
+                max_score=max_score,
+                checks=checks,
+            )
+        )
     return results
 
 
@@ -167,13 +171,19 @@ def _run_single_check(
         exists = (p / rel_path).exists() if rel_path else False
         if exists:
             return CheckResult(
-                check_id=check_id, name=name, category=category,
-                severity=Severity.PASS, score=100.0,
+                check_id=check_id,
+                name=name,
+                category=category,
+                severity=Severity.PASS,
+                score=100.0,
                 message=f"{rel_path} found",
             )
         return CheckResult(
-            check_id=check_id, name=name, category=category,
-            severity=Severity.FAIL, score=0.0,
+            check_id=check_id,
+            name=name,
+            category=category,
+            severity=Severity.FAIL,
+            score=0.0,
             message=f"{rel_path} not found",
             remediation=remediation,
         )
@@ -184,13 +194,19 @@ def _run_single_check(
         target = p / rel_path
         if target.exists() and pattern.lower() in target.read_text().lower():
             return CheckResult(
-                check_id=check_id, name=name, category=category,
-                severity=Severity.PASS, score=100.0,
+                check_id=check_id,
+                name=name,
+                category=category,
+                severity=Severity.PASS,
+                score=100.0,
                 message=f"{rel_path} contains required pattern",
             )
         return CheckResult(
-            check_id=check_id, name=name, category=category,
-            severity=Severity.FAIL, score=0.0,
+            check_id=check_id,
+            name=name,
+            category=category,
+            severity=Severity.FAIL,
+            score=0.0,
             message=f"Pattern not found in {rel_path}",
             remediation=remediation,
         )
@@ -202,29 +218,41 @@ def _run_single_check(
             check_path = override if override else rel_path
             if (p / check_path).exists():
                 return CheckResult(
-                    check_id=check_id, name=name, category=category,
-                    severity=Severity.PASS, score=100.0,
+                    check_id=check_id,
+                    name=name,
+                    category=category,
+                    severity=Severity.PASS,
+                    score=100.0,
                     message=f"Found: {check_path}",
                 )
         return CheckResult(
-            check_id=check_id, name=name, category=category,
-            severity=Severity.FAIL, score=0.0,
+            check_id=check_id,
+            name=name,
+            category=category,
+            severity=Severity.FAIL,
+            score=0.0,
             message=f"None of required paths found: {paths}",
             remediation=remediation,
         )
 
     elif check_type == "custom":
         return CheckResult(
-            check_id=check_id, name=name, category=category,
-            severity=Severity.WARN, score=50.0,
+            check_id=check_id,
+            name=name,
+            category=category,
+            severity=Severity.WARN,
+            score=50.0,
             message=f"Custom check '{check_id}' not yet implemented (plugin required)",
             remediation=remediation,
         )
 
     # Unknown check type
     return CheckResult(
-        check_id=check_id, name=name, category=category,
-        severity=Severity.WARN, score=0.0,
+        check_id=check_id,
+        name=name,
+        category=category,
+        severity=Severity.WARN,
+        score=0.0,
         message=f"Unknown check type: {check_type}",
     )
 

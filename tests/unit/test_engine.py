@@ -43,11 +43,7 @@ class TestAssess:
         """Excluded checks should not appear in results."""
         with tempfile.TemporaryDirectory() as tmp:
             result = assess("web_api", tmp, config={"exclude_checks": ["OBS-001"]})
-            all_check_ids = [
-                c.check_id
-                for cat in result.categories
-                for c in cat.checks
-            ]
+            all_check_ids = [c.check_id for cat in result.categories for c in cat.checks]
             assert "OBS-001" not in all_check_ids
 
     def test_assess_returns_all_categories(self):
@@ -56,6 +52,7 @@ class TestAssess:
             result = assess("web_api", tmp)
             cat_values = {c.category for c in result.categories}
             from prod_ready.core.models import Category
+
             assert Category.OBSERVABILITY in cat_values
             assert Category.SECURITY in cat_values
             assert Category.CICD in cat_values

@@ -1,6 +1,5 @@
 """Integration tests — validation fixtures with known projects."""
 
-
 import pytest
 
 from prod_ready.core.engine import assess
@@ -21,9 +20,7 @@ def well_prepared_project(tmp_path):
     (tmp_path / ".github" / "workflows" / "ci.yml").write_text("name: CI\n")
     # README with health + rollback mentions
     (tmp_path / "README.md").write_text(
-        "# My Service\n\n"
-        "Health Check\nGET /health\n\n"
-        "rollback\nRun `kubectl rollout undo`\n"
+        "# My Service\n\nHealth Check\nGET /health\n\nrollback\nRun `kubectl rollout undo`\n"
     )
     # Migrations
     (tmp_path / "migrations").mkdir()
