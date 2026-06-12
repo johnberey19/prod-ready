@@ -17,6 +17,7 @@ def to_json(result, pretty: bool = True) -> str:
 def to_yaml(result) -> str:
     """Serialize result to YAML string."""
     import yaml
+
     from prod_ready.cli.main import _result_to_dict
     data = _result_to_dict(result)
     return yaml.dump(data, default_flow_style=False)

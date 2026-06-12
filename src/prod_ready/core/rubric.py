@@ -7,8 +7,6 @@ from typing import Any
 
 import yaml
 
-from prod_ready.core.models import Category
-
 RUBRIC_DIR = Path(__file__).parent.parent / "rubrics"
 
 

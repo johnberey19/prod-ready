@@ -154,7 +154,6 @@ def _run_single_check(
     check_id = check_def.get("id", "UNKNOWN")
     name = check_def.get("name", check_id)
     check_type = check_def.get("type", "file_exists")
-    weight = float(check_def.get("weight", 1.0))
     remediation = check_def.get("remediation")
     category = _parse_category(cat_key)
     if category is None:
