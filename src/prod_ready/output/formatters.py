@@ -22,7 +22,7 @@ def to_yaml(result) -> str:
     from prod_ready.cli.main import _result_to_dict
 
     data = _result_to_dict(result)
-    return yaml.dump(data, default_flow_style=False)
+    return yaml.dump(data, default_flow_style=False)  # type: ignore[no-any-return]
 
 
 def to_dict(result) -> dict[str, Any]:

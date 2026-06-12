@@ -100,6 +100,26 @@ check_untyped_defs = true
 module = "tests.*"
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = "prod_ready.cli.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "prod_ready.output.*"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "prod_ready.core.audit"
+disallow_untyped_defs = false
+
+[[tool.mypy.overrides]]
+module = "yaml"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "prod_ready.core.rubric"
+ignore_missing_imports = true
+
 [tool.coverage.run]
 source = ["src/prod_ready"]
 branch = true

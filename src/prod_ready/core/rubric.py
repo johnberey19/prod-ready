@@ -57,7 +57,7 @@ def load_rubric(app_type: str, version: str | None = None) -> dict[str, Any]:
 
     rubric["_resolved_version"] = path.stem
     rubric["_resolved_path"] = str(path)
-    return rubric
+    return rubric  # type: ignore[no-any-return]
 
 
 def _version_key(version_str: str) -> tuple[int, ...]:
