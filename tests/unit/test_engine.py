@@ -3,8 +3,6 @@
 import tempfile
 from pathlib import Path
 
-import pytest
-
 from prod_ready.core.engine import assess
 from prod_ready.core.models import Severity
 

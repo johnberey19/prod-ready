@@ -1,5 +1,6 @@
 """Core prod-ready modules."""
 
+from prod_ready.core.engine import assess
 from prod_ready.core.models import (
     AssessmentResult,
     Category,
@@ -7,8 +8,7 @@ from prod_ready.core.models import (
     CheckResult,
     Severity,
 )
-from prod_ready.core.engine import assess
-from prod_ready.core.rubric import load_rubric, list_app_types
+from prod_ready.core.rubric import list_app_types, load_rubric
 
 __all__ = [
     "AssessmentResult",

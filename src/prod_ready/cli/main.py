@@ -12,8 +12,8 @@ from rich.table import Table
 
 from prod_ready import __version__
 from prod_ready.core.engine import assess
-from prod_ready.core.rubric import list_app_types, load_rubric
 from prod_ready.core.models import Severity
+from prod_ready.core.rubric import list_app_types, load_rubric
 
 console = Console()
 

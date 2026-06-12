@@ -1,7 +1,5 @@
 """Integration tests — validation fixtures with known projects."""
 
-import tempfile
-from pathlib import Path
 
 import pytest
 
