@@ -1,0 +1,186 @@
+# Web API Production-Readiness Rubric
+
+app_type: "Web API"
+version: "1.0"
+last_reviewed: "2026-06-12"
+
+weights:
+  observability: 0.25
+  security: 0.25
+  ci_cd: 0.20
+  data_integrity: 0.15
+  rollback: 0.15
+
+metadata:
+  author: "Council"
+  description: "Production-readiness rubric for REST/GraphQL web APIs"
+
+observability:
+  description: "Can you see what's happening in production?"
+  checks:
+    - id: "OBS-001"
+      name: "Structured logging configured"
+      type: file_exists
+      path: "pyproject.toml"
+      weight: 1.0
+      remediation: "Add structured logging (e.g., structlog, loguru) to your project."
+
+    - id: "OBS-002"
+      name: "Health check endpoint"
+      type: file_contains
+      path: "README.md"
+      pattern: "health"
+      weight: 1.0
+      remediation: "Add a /health or /ready endpoint that returns 200 when the service is healthy."
+
+    - id: "OBS-003"
+      name: "Metrics endpoint or agent"
+      type: path_exists
+      paths:
+        - "prometheus.yml"
+        - "otel-collector.yml"
+        - "datadog.yaml"
+      weight: 1.0
+      remediation: "Set up Prometheus metrics, OpenTelemetry, or a metrics agent."
+
+    - id: "OBS-004"
+      name: "Distributed tracing"
+      type: custom
+      weight: 0.5
+      remediation: "Configure distributed tracing (Jaeger, Zipkin, or OpenTelemetry)."
+
+    - id: "OBS-005"
+      name: "Alerting rules defined"
+      type: path_exists
+      paths:
+        - "alerts.yml"
+        - "alerting/"
+        - "monitoring/alerts.yaml"
+      weight: 1.0
+      remediation: "Define alerting rules for critical SLO breaches."
+
+security:
+  description: "Is the API protected against common threats?"
+  checks:
+    - id: "SEC-001"
+      name: "Authentication mechanism"
+      type: custom
+      weight: 1.5
+      remediation: "Implement authentication (OAuth2, JWT, API keys)."
+
+    - id: "SEC-002"
+      name: "Rate limiting"
+      type: custom
+      weight: 1.0
+      remediation: "Add rate limiting to prevent abuse."
+
+    - id: "SEC-003"
+      name: "Input validation"
+      type: custom
+      weight: 1.0
+      remediation: "Validate and sanitize all inputs (pydantic, marshmallow, etc.)."
+
+    - id: "SEC-004"
+      name: "HTTPS enforcement"
+      type: custom
+      weight: 1.0
+      remediation: "Enforce HTTPS in production. Use HSTS headers."
+
+    - id: "SEC-005"
+      name: "Dependency vulnerability scanning"
+      type: path_exists
+      paths:
+        - ".github/workflows/security.yml"
+        - "snyk.yml"
+        - ".trivyignore"
+      weight: 0.5
+      remediation: "Add dependency scanning (Dependabot, Snyk, Trivy) to CI."
+
+ci_cd:
+  description: "Is the deployment pipeline automated and reliable?"
+  checks:
+    - id: "CICD-001"
+      name: "CI pipeline configured"
+      type: path_exists
+      paths:
+        - ".github/workflows/ci.yml"
+        - ".gitlab-ci.yml"
+        - "Jenkinsfile"
+        - ".circleci/config.yml"
+      weight: 1.5
+      remediation: "Set up a CI pipeline that runs tests on every PR."
+
+    - id: "CICD-002"
+      name: "Automated tests"
+      type: path_exists
+      paths:
+        - "tests/"
+        - "test/"
+      weight: 1.5
+      remediation: "Write automated tests. Start with critical path tests."
+
+    - id: "CICD-003"
+      name: "Container image build"
+      type: file_exists
+      path: "Dockerfile"
+      weight: 1.0
+      remediation: "Add a Dockerfile for reproducible builds."
+
+    - id: "CICD-004"
+      name: "Deployment automation"
+      type: path_exists
+      paths:
+        - "deploy/"
+        - "k8s/"
+        - "helm/"
+        - ".github/workflows/deploy.yml"
+      weight: 1.0
+      remediation: "Automate deployments (GitHub Actions, ArgoCD, Helm, etc.)."
+
+data_integrity:
+  description: "Is data safe and consistent?"
+  checks:
+    - id: "DATA-001"
+      name: "Database migrations versioned"
+      type: path_exists
+      paths:
+        - "migrations/"
+        - "alembic/"
+        - "db/migrate/"
+      weight: 1.5
+      remediation: "Use a migration tool (Alembic, Flyway, Liquibase)."
+
+    - id: "DATA-002"
+      name: "Backup strategy"
+      type: custom
+      weight: 1.0
+      remediation: "Implement automated database backups with tested restore procedures."
+
+    - id: "DATA-003"
+      name: "Data validation at API boundary"
+      type: custom
+      weight: 0.5
+      remediation: "Validate all data at the API boundary before persistence."
+
+rollback:
+  description: "Can you recover from a bad deployment?"
+  checks:
+    - id: "ROLL-001"
+      name: "Rollback procedure documented"
+      type: file_contains
+      path: "README.md"
+      pattern: "rollback"
+      weight: 1.0
+      remediation: "Document the rollback procedure in your README or runbooks."
+
+    - id: "ROLL-002"
+      name: "Blue-green or canary deployment"
+      type: custom
+      weight: 1.0
+      remediation: "Implement blue-green or canary deployments for safe rollouts."
+
+    - id: "ROLL-003"
+      name: "Database rollback capability"
+      type: custom
+      weight: 1.0
+      remediation: "Ensure database migrations are reversible or have rollback scripts."

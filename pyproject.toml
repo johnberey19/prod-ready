@@ -1,0 +1,114 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "prod-ready"
+dynamic = ["version"]
+description = "Dynamic production-readiness assessment framework"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+authors = [
+    { name = "ZOO", email = "dev@zoo.dev" },
+]
+keywords = ["devops", "production-readiness", "assessment", "cli", "rubric"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "click>=8.1",
+    "pyyaml>=6.0",
+    "rich>=13.0",
+    "pydantic>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4",
+    "pytest-cov>=4.1",
+    "pytest-xdist>=3.3",
+    "ruff>=0.5",
+    "mypy>=1.5",
+    "pre-commit>=3.4",
+]
+
+[project.scripts]
+prod-ready = "prod_ready.cli.main:main"
+
+[project.urls]
+Homepage = "https://github.com/johnberey19/prod-ready"
+Repository = "https://github.com/johnberey19/prod-ready"
+Issues = "https://github.com/johnberey19/prod-ready/issues"
+Changelog = "https://github.com/johnberey19/prod-ready/blob/main/CHANGELOG.md"
+
+[tool.hatch.version]
+path = "src/prod_ready/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/prod_ready"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests with fixtures",
+    "validation: Validation suite tests",
+]
+addopts = "-v --strict-markers"
+xfail_strict = true
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "UP",   # pyupgrade
+    "SIM",  # simplify
+]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["prod_ready"]
+
+[tool.mypy]
+python_version = "3.10"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+check_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+disallow_untyped_defs = false
+
+[tool.coverage.run]
+source = ["src/prod_ready"]
+branch = true
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 80
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+]
