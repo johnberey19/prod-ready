@@ -6,7 +6,8 @@ on:
       - "v*.*.*"
 
 permissions:
-  contents: write
+  contents: write  # includes read for actions/checkout
+  id-token: write  # for PyPI trusted publisher OIDC
 
 jobs:
   release:
@@ -54,8 +55,7 @@ jobs:
     environment:
       name: pypi
       url: https://pypi.org/p/prod-ready
-    permissions:
-      id-token: write
+    # permissions inherited from workflow level (id-token: write)
     steps:
       - uses: actions/checkout@v4
 
@@ -72,7 +72,14 @@ jobs:
       - name: Build package
         run: python -m build
 
-      - name: Publish to PyPI
+      - name: Publish to PyPI (API token)
+        if: ${{ secrets.PYPI_TOKEN != '' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_TOKEN }}
+
+      - name: Publish to PyPI (trusted publisher OIDC)
+        if: ${{ secrets.PYPI_TOKEN == '' }}
         uses: pypa/gh-action-pypi-publish@release/v1
 
   publish-homebrew:
@@ -80,76 +87,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [release, publish-pypi]
     steps:
-      - uses: actions/checkout@v4
+      - name: Wait for PyPI propagation
+        run: sleep 30
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Update Homebrew formula
+        uses: dawidd6/action-homebrew-bump-formula@v3
         with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install requests
-
-      - name: Update Homebrew tap
-        env:
-          HOMEBREW_TAP_TOKEN: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-        run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          # Get the SHA256 of the PyPI sdist
-          pip download "prod-ready==$VERSION" --no-deps -d /tmp/dist
-          SHA256=$(sha256sum /tmp/dist/prod-ready-$VERSION.tar.gz | cut -d' ' -f1)
-
-          # Clone the homebrew tap repo
-          git clone "https://x-access-token:${HOMEBREW_TAP_TOKEN}@github.com/johnberey19/homebrew-prod-ready.git" /tmp/tap
-
-          # Update the formula
-          cat > /tmp/tap/Formula/prod-ready.rb << FORMULA
-          class ProdReady < Formula
-            include Language::Python::Virtualenv
-
-            desc "Dynamic production-readiness assessment framework"
-            homepage "https://github.com/johnberey19/prod-ready"
-            url "https://files.pythonhosted.org/packages/source/p/prod-ready/prod-ready-${VERSION}.tar.gz"
-            sha256 "${SHA256}"
-            license "MIT"
-
-            depends_on "python@3.11"
-
-            resource "click" do
-              url "https://files.pythonhosted.org/packages/source/c/click/click-8.1.7.tar.gz"
-              sha256 "ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"
-            end
-
-            resource "pyyaml" do
-              url "https://files.pythonhosted.org/packages/source/p/pyyaml/pyyaml-6.0.1.tar.gz"
-              sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
-            end
-
-            resource "rich" do
-              url "https://files.pythonhosted.org/packages/source/rich/rich-13.7.0.tar.gz"
-              sha256 "5cb5123b1f95ee7ab1eb7e5a3017a812c5c63bb5bb5bb5bb5bb5bb5bb5bb5bb5"
-            end
-
-            resource "pydantic" do
-              url "https://files.pythonhosted.org/packages/source/p/pydantic/pydantic-2.5.3.tar.gz"
-              sha256 "b3ef57c6e67168a988d8d9f92f6e885e82e82e5e5e5e5e5e5e5e5e5e5e5e5e5e"
-            end
-
-            def install
-              virtualenv_install_with_resources
-            end
-
-            test do
-              assert_match "prod-ready", shell_output("\#{bin}/prod-ready --version")
-            end
-          end
-          FORMULA
-
-          cd /tmp/tap
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add Formula/prod-ready.rb
-          git commit -m "prod-ready ${VERSION}"
-          git push
+          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
+          formula: prod-ready
+          tap: johnberey19/homebrew-prod-ready
+          tag: ${{ github.ref_name }}
+          force: false

@@ -1,0 +1,117 @@
+.TH PROD-READY 1 "2026-06-12" "prod-ready 0.1.0" "User Commands"
+.SH NAME
+prod-ready \- dynamic production-readiness assessment framework
+.SH SYNOPSIS
+.B prod-ready
+[\fI\,GLOBAL OPTIONS\/\fR] \fI\,COMMAND\/\fR [\fI\,ARGS\/\fR...]
+.SH DESCRIPTION
+.B prod-ready
+is a CLI tool that assesses the production-readiness of applications
+using deterministic scoring rubrics. It produces structured gap reports with
+severity tiers and actionable remediation guidance.
+.PP
+This is an assessment tool, not a certification engine. It surfaces gaps and
+recommends fixes — the decisions are yours.
+.SH GLOBAL OPTIONS
+.TP
+.BR \-v ", " \-\-version
+Show the version and exit.
+.TP
+.BR \-h ", " \-\-help
+Show help message and exit.
+.SH COMMANDS
+.TP
+.B assess
+Run a production-readiness assessment.
+.RS
+.TP
+.BR \-\-type " " \fITYPE\fR
+Application type to assess (e.g. web-api, data-pipeline). Required.
+.TP
+.BR \-\-path " " \fIPATH\fR
+Path to the project root. Default: current directory.
+.TP
+.BR \-\-format " " \fIFORMAT\fR
+Output format: table, json, or yaml. Default: table.
+.TP
+.BR \-\-rubric\-version " " \fIVERSION\fR
+Rubric version to use. Default: latest.
+.TP
+.BR \-\-exclude " " \fIID\fR
+Check IDs to exclude (repeatable).
+.RE
+.TP
+.B list\-types
+List available app types and their rubric versions.
+.TP
+.B info
+Show rubric info for an app type.
+.RS
+.TP
+.BR \-\-type " " \fITYPE\fR
+Application type. Required.
+.RE
+.SH EXIT STATUS
+.TP
+.B 0
+Successful execution.
+.TP
+.B 1
+Error (e.g., unknown app type, invalid path).
+.SH FILES
+.TP
+.I prod\-ready.yaml
+Configuration file for project assessment settings.
+.TP
+.I ~/.prod\-ready/audit/
+Directory containing audit logs from previous assessments.
+.SH ENVIRONMENT
+.TP
+.B PROD_READY_CONFIG
+Path to prod-ready.yaml configuration file.
+.TP
+.B PROD_READY_OFFLINE
+Set to 1 to skip network checks.
+.TP
+.B PROD_READY_NO_COLOR
+Set to 1 to disable ANSI colors.
+.SH EXAMPLES
+.PP
+Assess a web API project:
+.RS
+.nf
+prod-ready assess --type web-api --path /path/to/project
+.fi
+.RE
+.PP
+Output as JSON:
+.RS
+.nf
+prod-ready assess --type web-api --path . --format json --output report.json
+.fi
+.RE
+.PP
+List available app types:
+.RS
+.nf
+prod-ready list-types
+.fi
+.RE
+.SH SEE ALSO
+.TP
+.I README.md
+Full documentation and quick start guide.
+.TP
+.I GETTING_STARTED.md
+5-minute walkthrough with common workflows.
+.TP
+.I CONTRIBUTING.md
+Guide for contributing new app types and checks.
+.TP
+.UR https://github.com/johnberey19/prod-ready
+Project homepage
+.UE
+.SH AUTHOR
+ZOO <dev@zoo.dev>
+.SH LICENSE
+MIT License

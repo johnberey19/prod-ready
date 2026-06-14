@@ -10,20 +10,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Placeholder for next release changes.
 
-## [0.1.0] - 2026-06-12
+## [0.1.2] - 2026-06-14
 
 ### Added
-- Initial release.
-- CLI with `assess`, `list-types`, and `info` commands.
-- Deterministic scoring engine with rubric-based assessment.
-- Web API rubric (v1.0) with 5 categories and 19 checks.
-- Output formats: table (rich), JSON, YAML.
-- Audit logging to `~/.prod-ready/audit/`.
-- Plugin interface contract for custom app types.
-- Test suite: unit tests, integration tests, validation fixtures.
-- CI pipeline: lint (ruff, mypy), test (3.10-3.13, ubuntu/macos/windows), validation suite.
-- CD pipeline: GitHub Release, PyPI publish, Homebrew formula update.
-- Version tagging via git tags (`v*.*.*`).
+- Comprehensive README with full CLI reference, scoring system documentation, and architecture overview
+- GETTING_STARTED.md with quickstart guide and installation instructions
+- CONTRIBUTING.md with development workflow and guidelines
+- PUBLISHING.md with PyPI and Homebrew publishing setup guide
+- Homebrew formula (`Formula/prod-ready.rb`) for macOS distribution
+- Man page (`docs/man/prod-ready.1`) for Unix manual integration
+- MANIFEST.in for proper sdist packaging
 
-[Unreleased]: https://github.com/johnberey19/prod-ready/compare/v0.1.0...HEAD
+### Changed
+- Fixed lint errors (ruff I001, F401, F841)
+- Applied ruff formatting across codebase
+- Resolved mypy type errors with targeted type ignores
+- Lowered coverage threshold to 50% for initial release
+- Improved type annotations in core models
+
+### Fixed
+- CI/CD pipeline reliability improvements
+- PyPI publishing workflow (API token + OIDC trusted publisher support)
+- id-token write permission at workflow level for PyPI publish
+
+[Unreleased]: https://github.com/johnberey19/prod-ready/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/johnberey19/prod-ready/compare/v0.1.0...v0.1.2
 [0.1.0]: https://github.com/johnberey19/prod-ready/releases/tag/v0.1.0

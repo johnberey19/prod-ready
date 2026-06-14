@@ -1,0 +1,17 @@
+# Include documentation files in sdist
+include README.md
+include GETTING_STARTED.md
+include CONTRIBUTING.md
+include CHANGELOG.md
+include LICENSE
+
+# Include man pages
+include docs/man/*.1
+
+# Exclude CI/CD and dev config from sdist
+exclude .github
+exclude .pre-commit-config.yaml
+exclude Makefile
+exclude tests
+prune .github
+prune tests

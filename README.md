@@ -86,14 +86,14 @@ pip install prod-ready
 ### Homebrew (macOS/Linux)
 
 ```bash
-brew tap yourorg/prod-ready
+brew tap johnberey19/prod-ready
 brew install prod-ready
 ```
 
 ### From Source
 
 ```bash
-git clone https://github.com/yourorg/prod-ready.git
+git clone https://github.com/johnberey19/prod-ready.git
 cd prod-ready
 pip install -e .
 ```
